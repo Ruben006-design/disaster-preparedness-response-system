@@ -1,0 +1,68 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: disaster_mysql_container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: disaster_response_db
+      MYSQL_USER: disaster_app
+      MYSQL_PASSWORD: disaster_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    networks:
+      - disaster_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: disaster_backend_container
+    restart: unless-stopped
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysqldb
+      DB_PORT: 3306
+      DB_NAME: disaster_response_db
+      DB_USERNAME: disaster_app
+      DB_PASSWORD: disaster_password
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      SERVER_PORT: 8080
+      FILE_UPLOAD_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - backend_uploads:/app/uploads
+    networks:
+      - disaster_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: disaster_frontend_container
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    networks:
+      - disaster_network
+
+volumes:
+  mysql_data:
+  backend_uploads:
+
+networks:
+  disaster_network:
+    driver: bridge

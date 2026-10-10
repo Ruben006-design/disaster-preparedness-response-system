@@ -1,0 +1,218 @@
+{
+  "info": {
+    "name": "Disaster Preparedness and Response Education System API",
+    "description": "Comprehensive REST API test collection for citizen disaster reporting, officer triage, agency dispatch, and preparedness assessment scoring.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login - Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@disasterprep.gov\",\n  \"password\": \"AdminPassword@123\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/login" }
+          }
+        },
+        {
+          "name": "Login - Government Officer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"officer.sharma@disasterprep.gov\",\n  \"password\": \"OfficerPass@123\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/login" }
+          }
+        },
+        {
+          "name": "Login - Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.alex@university.edu\",\n  \"password\": \"StudentPass@123\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/login" }
+          }
+        },
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sarah Jenkins\",\n  \"email\": \"sarah.j@university.edu\",\n  \"password\": \"SecurePass@2026\",\n  \"phone\": \"+1555123456\",\n  \"role\": \"STUDENT\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/auth/register" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Disaster Reporting Workflow",
+      "item": [
+        {
+          "name": "Submit Disaster Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disasterTypeId\": 1,\n  \"severity\": \"HIGH\",\n  \"title\": \"Severe Flash Flood on Main Arterial\",\n  \"description\": \"Ground level stores inundated with 3 feet of water. Civilians sheltering on rooftops.\",\n  \"address\": \"Main Market Circle, Sector 9\",\n  \"latitude\": 37.7749,\n  \"longitude\": -122.4194,\n  \"aftermath\": \"Power sub-station severed\",\n  \"contactPhone\": \"+1555987654\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/reports" }
+          }
+        },
+        {
+          "name": "Get Incident by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": { "raw": "http://localhost:8080/api/reports/1" }
+          }
+        },
+        {
+          "name": "Filter Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": { "raw": "http://localhost:8080/api/reports?page=0&size=10" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Officer Triage & Dispatch",
+      "item": [
+        {
+          "name": "Verify Incident",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{officer_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verificationNotes\": \"Verified via municipal police cameras. Water rising steadily.\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/officer/reports/1/verify" }
+          }
+        },
+        {
+          "name": "Assign Department & Team",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{officer_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"departmentId\": 1,\n  \"responseTeamId\": 1,\n  \"priority\": \"CRITICAL\",\n  \"instructions\": \"Deploy inflatable motorized rafts; evacuate ground level inhabitants to Community Center.\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/officer/reports/1/assign" }
+          }
+        },
+        {
+          "name": "Reject Report (Mandatory Reason)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{officer_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rejectionReason\": \"Duplicate report of DR-2026-FLOOD-01. Units already en route.\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/officer/reports/1/reject" }
+          }
+        },
+        {
+          "name": "Update Incident Operational Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{officer_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESPONSE_IN_PROGRESS\",\n  \"remarks\": \"3 rafts deployed on site; 14 civilians moved to safety.\"\n}"
+            },
+            "url": { "raw": "http://localhost:8080/api/officer/reports/1/status" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Education & Scoring",
+      "item": [
+        {
+          "name": "Get Learning Modules",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/education/modules" }
+          }
+        },
+        {
+          "name": "Complete Module",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": { "raw": "http://localhost:8080/api/education/modules/1/complete" }
+          }
+        },
+        {
+          "name": "Get Preparedness Assessment Score",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": { "raw": "http://localhost:8080/api/education/preparedness-score" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Public GIS Map & Contacts",
+      "item": [
+        {
+          "name": "Public Map Incidents",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/map/incidents" }
+          }
+        },
+        {
+          "name": "Emergency Directory",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "http://localhost:8080/api/contacts" }
+          }
+        }
+      ]
+    }
+  ]
+}
