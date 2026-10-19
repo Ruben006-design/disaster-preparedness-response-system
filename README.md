@@ -152,10 +152,6 @@ Open your browser at `http://localhost:5173`.
 
 ---
 
-## 📚 Viva Preparation
-
-For detailed viva explanations, architectural comparisons between Spring Boot and Core Java, SQL injection prevention, and interview answers, review [`docs/viva_guide.md`](file:///c:/Users/ruben/Disaster%20preparedness%20and%20response%20education%20system/docs/viva_guide.md).
-=======
 # disaster-preparedness-response-system
 Disaster Preparedness and Response Education System for Schools and Colleges
 
